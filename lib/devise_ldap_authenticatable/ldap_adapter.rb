@@ -108,7 +108,7 @@ module Devise
           if group.is_a?(Array)
             group_attribute, group_name = group
           else
-            group_attribute = "uniqueMember"
+            group_attribute = "member"
             group_name = group
           end
           DeviseLdapAuthenticatable::Logger.send("Looking for group: #{group_name }")
