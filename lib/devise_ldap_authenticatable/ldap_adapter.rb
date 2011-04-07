@@ -113,6 +113,7 @@ module Devise
             group_attribute = "uniqueMember"
             group_name = group
           end
+          DeviseLdapAuthenticatable::Logger.send("Looking for group: #{group_name }")
           admin_ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
             unless entry[group_attribute].include? dn
               DeviseLdapAuthenticatable::Logger.send("User #{dn} is not in group: #{group_name }")
@@ -152,14 +153,13 @@ module Devise
       private
       
       def self.admin
-        ldap = LdapConnect.new(:admin => true).ldap
         
-        unless ldap.bind
-          DeviseLdapAuthenticatable::Logger.send("Cannot bind to admin LDAP user")
-          raise DeviseLdapAuthenticatable::LdapException, "Cannot connect to admin LDAP user"
+        unless @ldap.bind
+          DeviseLdapAuthenticatable::Logger.send("Cannot bind to LDAP user")
+          raise DeviseLdapAuthenticatable::LdapException, "Cannot connect to LDAP user"
         end
         
-        return ldap
+        return @ldap
       end
       
       def find_ldap_user(ldap)
