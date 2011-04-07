@@ -102,21 +102,18 @@ module Devise
         return true unless ::Devise.ldap_check_group_membership
         
         ## FIXME set errors here, the ldap.yml isn't set properly.
-        return false if @required_groups.nil?   
+        if @required_groups.nil?
+          DeviseLdapAuthenticatable::Logger.send("Your required groups list is empty!")
+          return false
+        end
+        
+        current_user_groups = user_groups
                 
         for group in @required_groups
-          if group.is_a?(Array)
-            group_attribute, group_name = group
-          else
-            group_attribute = "member"
-            group_name = group
-          end
-          DeviseLdapAuthenticatable::Logger.send("Looking for group: #{group_name }")
-          @ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
-            unless entry[group_attribute].include? dn
-              DeviseLdapAuthenticatable::Logger.send("User #{dn} is not in group: #{group_name }")
-              return false
-            end
+          DeviseLdapAuthenticatable::Logger.send("Looking for group: #{group }")
+          unless current_user_groups.include? group
+            DeviseLdapAuthenticatable::Logger.send("User #{dn} is not in group: #{group }")
+            return false
           end
         end
         
@@ -141,11 +138,9 @@ module Devise
       end
       
       def user_groups
-        admin_ldap = LdapConnect.admin
-
         DeviseLdapAuthenticatable::Logger.send("Getting groups for #{dn}")
         filter = Net::LDAP::Filter.eq("uniqueMember", dn)
-        admin_ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
+        @ldap.search(:filter => filter, :base => @group_base).collect(&:dn)
       end
       
       private
