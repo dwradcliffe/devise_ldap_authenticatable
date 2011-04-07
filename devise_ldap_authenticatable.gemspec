@@ -27,8 +27,6 @@ Gem::Specification.new do |s|
      "lib/devise_ldap_authenticatable/ldap_adapter.rb",
      "lib/devise_ldap_authenticatable/logger.rb",
      "lib/devise_ldap_authenticatable/model.rb",
-     "lib/devise_ldap_authenticatable/routes.rb",
-     "lib/devise_ldap_authenticatable/schema.rb",
      "lib/devise_ldap_authenticatable/strategy.rb",
      "lib/devise_ldap_authenticatable/version.rb",
      "lib/generators/devise_ldap_authenticatable/install_generator.rb",
