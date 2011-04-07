@@ -103,8 +103,6 @@ module Devise
         
         ## FIXME set errors here, the ldap.yml isn't set properly.
         return false if @required_groups.nil?   
-           
-        admin_ldap = LdapConnect.admin
                 
         for group in @required_groups
           if group.is_a?(Array)
@@ -114,7 +112,7 @@ module Devise
             group_name = group
           end
           DeviseLdapAuthenticatable::Logger.send("Looking for group: #{group_name }")
-          admin_ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
+          @ldap.search(:base => group_name, :scope => Net::LDAP::SearchScope_BaseObject) do |entry|
             unless entry[group_attribute].include? dn
               DeviseLdapAuthenticatable::Logger.send("User #{dn} is not in group: #{group_name }")
               return false
